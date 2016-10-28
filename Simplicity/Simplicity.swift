@@ -36,16 +36,18 @@ public final class Simplicity {
     
     /// Deep link handler (iOS9)
     public static func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any]) -> Bool {
-        safari?.dismiss(animated: true, completion: nil)
         guard let callback = callback, url.scheme == currentLoginProvider?.urlScheme else {
-            return false
+          return false
         }
-        currentLoginProvider?.linkHandler(url, callback: callback)
-        currentLoginProvider = nil
-        
+
+        safari?.dismiss(animated: true, completion: {
+          currentLoginProvider?.linkHandler(url, callback: callback)
+          currentLoginProvider = nil
+        })
+
         return true
     }
-    
+
     /// Deep link handler (<iOS9)
     public static func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
         return self.application(application, open: url, options: [UIApplicationOpenURLOptionsKey: Any]())
